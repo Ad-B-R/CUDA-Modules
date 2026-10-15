@@ -1,4 +1,4 @@
-#include "timer.h"
+#include "../timer.h"
 
 void vecadd_cpu(float *x, float *y, float *z, int N){
     for (unsigned int i = 0; i<N; i++){
@@ -6,7 +6,7 @@ void vecadd_cpu(float *x, float *y, float *z, int N){
     }
 }
 
-__global__ void vector_kernel(float *x, float *y, float *z, int N){
+__global__ void rgbgray_kernel(float *x, float *y, float *z, int N){
     unsigned int i = blockDim.x*blockIdx.x + threadIdx.x;
     if (i<N){
         z[i] = x[i] + y[i];
@@ -26,7 +26,7 @@ void vecadd_gpu(float *x, float *y, float *z, int N){
     const unsigned int numThreadsPerBlock = 512;
     const unsigned int numBlocks = (N+numThreadsPerBlock-1)/numThreadsPerBlock;
 
-    vector_kernel<<<numBlocks, numThreadsPerBlock>>>(x_d, y_d, z_d, N);
+    rgbgray_kernel<<<numBlocks, numThreadsPerBlock>>>(x_d, y_d, z_d, N);
     cudaError_t err = cudaGetLastError();
     if (err != cudaSuccess) {
         fprintf(stderr, "Kernel launch failed: %s\n", cudaGetErrorString(err));
